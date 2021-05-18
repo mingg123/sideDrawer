@@ -7,21 +7,26 @@ import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
-import {
-  Divider,
-  Drawer,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
-} from "@material-ui/core";
+import { Divider, Drawer } from "@material-ui/core";
+import CloseIcon from "@material-ui/icons/Close";
+import content from "./content";
 
 const useStyles = makeStyles({
   table: {
     minWidth: 650,
   },
-  list: {
+  container: {
     width: 700,
+    display: "flex",
+    flexDirection: "row",
+  },
+  title: {
+    flex: 1,
+    flexBasis: "600px",
+    fontSize: "2rem",
+  },
+  icon: {
+    flex: 1,
   },
 });
 
@@ -30,56 +35,36 @@ function createData(name, status, starttime, endtime, elapsedtime) {
 }
 
 const rows = [
-  createData("temp1", "Finished", 2021.05, 2026.06, "1second"),
-  createData("temp2", "Running", 2021.06, 2025.06, "1second"),
-  createData("temp3", "Stop", 2021.07, 2024.06, "1second"),
-  createData("temp4", "Running", 2021.08, 2023.06, "1second"),
-  createData("temp5", "Finished", 2021.09, 2022.06, "1second"),
+  createData("work1", "Finished", 2021.05, 2026.06, "1second"),
+  createData("work2", "Running", 2021.06, 2025.06, "2second"),
+  createData("work3", "Stop", 2021.07, 2024.06, "3second"),
+  createData("work4", "Running", 2021.08, 2023.06, "4second"),
+  createData("work5", "Finished", 2021.09, 2022.06, "5second"),
 ];
 
 export default function TableExample() {
-  // const classes = useStyles();
+  const classes = useStyles();
 
-  const [state, setState] = React.useState(false);
+  const [open, setOpen] = React.useState(false);
+  const [name, setName] = React.useState("");
+  const [onClickRow, setOnClickRow] = React.useState({});
 
-  const toggleDrawer = (open) => (event) => {
-    console.log("toggleDrawer Open!");
-    if (
-      event.type === "keydown" &&
-      (event.key === "Tab" || event.key === "Shift")
-    ) {
-      return;
-    }
-
-    setState(true);
-  };
-
-  const list = () => (
-    <div
-      style={{
-        width: 700,
-      }}
-      role="presentation"
-    >
-      <List>
-        {["Inbox", "Starred", "Send email", "Drafts"].map((text, index) => (
-          <ListItem button key={text}>
-            <ListItemIcon></ListItemIcon>
-            <ListItemText primary={text} />
-          </ListItem>
-        ))}
-      </List>
+  const drawer = () => (
+    <div>
+      <div className={classes.container} role="presentation">
+        <div className={classes.title}>{name}</div>
+        <div className={classes.icon}>
+          {open && (
+            <CloseIcon
+              onClick={(e) => {
+                setOpen(false);
+              }}
+            />
+          )}
+        </div>
+      </div>
       <Divider />
-      <List>
-        {["All mail", "Trash", "Spam"].map((text, index) => (
-          <ListItem button key={text}>
-            <ListItemIcon>
-              {/* {index % 2 === 0 ? <InboxIcon /> : <MailIcon />} */}
-            </ListItemIcon>
-            <ListItemText primary={text} />
-          </ListItem>
-        ))}
-      </List>
+      <div>{content(onClickRow)}</div>
     </div>
   );
 
@@ -93,8 +78,20 @@ export default function TableExample() {
       >
         <TableHead>
           <TableRow>
-            <Drawer anchor={"right"} open={state} onClose={toggleDrawer(false)}>
-              {list()}
+            <Drawer
+              anchor={"right"}
+              open={open}
+              onClose={(e) => {
+                if (
+                  e.type === "keydown" &&
+                  (e.key === "Tab" || e.key === "Shift")
+                ) {
+                  return;
+                }
+                setOpen(false);
+              }}
+            >
+              {drawer()}
             </Drawer>
             <TableCell>Name </TableCell>
             <TableCell align="right">Status</TableCell>
@@ -105,11 +102,31 @@ export default function TableExample() {
         </TableHead>
         <TableBody>
           {rows.map((row) => (
-            <TableRow key={row.name} onClick={toggleDrawer(true)}>
+            <TableRow
+              key={row.name}
+              onClick={(e) => {
+                setOpen(true);
+                setName(row.name);
+                setOnClickRow(row);
+                console.log(onClickRow.status);
+              }}
+            >
               <TableCell component="th" scope="row">
                 {row.name}
               </TableCell>
-              <TableCell align="right">{row.status}</TableCell>
+              <TableCell
+                style={{
+                  color:
+                    row.status == "Running"
+                      ? "blue"
+                      : row.status == "Finished"
+                      ? "green"
+                      : "red",
+                }}
+                align="right"
+              >
+                {row.status}
+              </TableCell>
               <TableCell align="right">{row.starttime}</TableCell>
               <TableCell align="right">{row.endtime}</TableCell>
               <TableCell align="right">{row.elapsedtime}</TableCell>
