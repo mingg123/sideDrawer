@@ -1,7 +1,7 @@
 # Right Side Drawer
 
 ```
-  테이블 Row를 클릭하여 row의 정보를 보여줌 
+  테이블 Row를 클릭시 Row의 해당 정보를 보여줌 
 ```
 ![Screencast from 2021년 05월 18일 20시 38분 55초](https://user-images.githubusercontent.com/52990629/118645136-85001380-b819-11eb-98a4-375997bcc844.gif)
 
